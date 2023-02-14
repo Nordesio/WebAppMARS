@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAppMARS", "WebAppMARS\WebAppMARS.csproj", "{AC6E7D88-8A79-4670-AD7A-15D91BFAA091}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestApi", "WebAppMARS\RestApi.csproj", "{AC6E7D88-8A79-4670-AD7A-15D91BFAA091}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseImplement", "DatabaseImplement\DatabaseImplement.csproj", "{94A0E8AD-6353-480D-B17A-35C5FF58384B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Contracts", "Contracts\Contracts.csproj", "{F486DD16-0CE6-4700-AE0A-990E45614CE1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogics", "BusinessLogics\BusinessLogics.csproj", "{91DA1BA3-9DDB-40B0-8304-7F411ADEA6A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "WebApp\WebApp.csproj", "{3407119E-9401-4112-8754-25C4A481CB97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{91DA1BA3-9DDB-40B0-8304-7F411ADEA6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91DA1BA3-9DDB-40B0-8304-7F411ADEA6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91DA1BA3-9DDB-40B0-8304-7F411ADEA6A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3407119E-9401-4112-8754-25C4A481CB97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3407119E-9401-4112-8754-25C4A481CB97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3407119E-9401-4112-8754-25C4A481CB97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3407119E-9401-4112-8754-25C4A481CB97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,8 +13,8 @@ namespace DatabaseImplement.Models
         public int ProductId { get; set; }
         [Required]
         public int ProductQuntity { get; set; }
-        public virtual Product Produdct {get;set;}
+        public Product Product {get;set;}
 
-
+        public SalesPoint SalesPoint { get; set; }
     }
 }

@@ -32,7 +32,7 @@ namespace BusinessLogics
             return _buyerStorage.GetFilteredList(model);
         }
 
-        public void CreateOrUpdate(BuyerBindingModel model)
+        public void CreateOrUpdate(BuyerBindingModel model, bool update = false)
         {
             var element = _buyerStorage.GetElement(new BuyerBindingModel
             {
@@ -42,7 +42,7 @@ namespace BusinessLogics
             {
                 throw new Exception("Уже есть клиент с таким именем");
             }
-            if (model.Id.HasValue)
+            if (update)
             {
                 _buyerStorage.Update(model);
             }

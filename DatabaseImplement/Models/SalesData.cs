@@ -15,6 +15,7 @@ namespace DatabaseImplement.Models
         public int ProductQuantity { get; set; }
         [Required]
         public float ProductIdAmount { get; set; }
-        public virtual Product Product { get; set; }
+        public Product Product { get; set; }
+        public Sale Sale { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Contracts.BusinessLogics
     public interface IBuyerLogic
     {
         List<BuyerViewModel> Read(BuyerBindingModel model);
-        void CreateOrUpdate(BuyerBindingModel model);
+        void CreateOrUpdate(BuyerBindingModel model, bool update);
         void Delete(BuyerBindingModel model);
     }
 }

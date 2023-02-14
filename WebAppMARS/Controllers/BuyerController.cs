@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Contracts.BindingModels;
 using Contracts.ViewModels;
 using Contracts.BusinessLogics;
+
 namespace WebAppMARS.Controllers
 {
     [Route("api/[controller]/[action]")]
@@ -10,6 +11,7 @@ namespace WebAppMARS.Controllers
       public class BuyerController : ControllerBase
       {
         private readonly IBuyerLogic _logic;
+
         public BuyerController(IBuyerLogic logic)
         {
             _logic = logic;
@@ -22,9 +24,9 @@ namespace WebAppMARS.Controllers
         }
         [HttpPost]
         public void Register(BuyerBindingModel model) =>
-            _logic.CreateOrUpdate(model);
+            _logic.CreateOrUpdate(model, false);
         [HttpPost]
         public void UpdateData(BuyerBindingModel model) =>
-            _logic.CreateOrUpdate(model);
+            _logic.CreateOrUpdate(model, true);
       }
 }

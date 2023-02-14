@@ -21,20 +21,6 @@ namespace DatabaseImplement.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Products",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Products", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Sales",
                 columns: table => new
                 {
@@ -79,12 +65,6 @@ namespace DatabaseImplement.Migrations
                 {
                     table.PrimaryKey("PK_SalesDatas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SalesDatas_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_SalesDatas_Sales_SaleId",
                         column: x => x.SaleId,
                         principalTable: "Sales",
@@ -106,12 +86,6 @@ namespace DatabaseImplement.Migrations
                 {
                     table.PrimaryKey("PK_ProvidedProducts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ProvidedProducts_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_ProvidedProducts_SalesPoints_SalesPointId",
                         column: x => x.SalesPointId,
                         principalTable: "SalesPoints",
@@ -119,20 +93,44 @@ namespace DatabaseImplement.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Price = table.Column<float>(type: "real", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_ProvidedProducts_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "ProvidedProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Products_SalesDatas_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "SalesDatas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_ProvidedProducts_ProductId",
-                table: "ProvidedProducts",
-                column: "ProductId");
+                name: "IX_Products_ProductId",
+                table: "Products",
+                column: "ProductId",
+                unique: true,
+                filter: "[ProductId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProvidedProducts_SalesPointId",
                 table: "ProvidedProducts",
                 column: "SalesPointId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SalesDatas_ProductId",
-                table: "SalesDatas",
-                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SalesDatas_SaleId",
@@ -146,6 +144,9 @@ namespace DatabaseImplement.Migrations
                 name: "Buyers");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
                 name: "ProvidedProducts");
 
             migrationBuilder.DropTable(
@@ -153,9 +154,6 @@ namespace DatabaseImplement.Migrations
 
             migrationBuilder.DropTable(
                 name: "SalesPoints");
-
-            migrationBuilder.DropTable(
-                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Sales");
