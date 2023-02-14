@@ -8,7 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Contracts.StorageContracts;
+using Contracts.ViewModels;
+using DatabaseImplement.Implements;
+using BusinessLogics;
+using Contracts.BusinessLogics;
+using Microsoft.OpenApi.Models;
 namespace WebAppMARS
 {
     public class Startup
@@ -23,7 +28,21 @@ namespace WebAppMARS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            services.AddTransient<IBuyerStorage, BuyerStorage>();
+            services.AddTransient<IProductStorage, ProductStorage>();
+            services.AddTransient<ISalesPointStorage, SalesPointStorage>();
+            services.AddTransient<ISaleStorage, SaleStorage>();
+
+            services.AddTransient<IBuyerLogic, BuyerLogic>();
+            services.AddTransient<IProductLogic, ProductLogic>();
+            services.AddTransient<ISalesPointLogic, SalesPointLogic>();
+            services.AddTransient<ISaleLogic, SaleLogic>();
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestApi", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -32,15 +51,12 @@ namespace WebAppMARS
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RestApi v1"));
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+          
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
+
 
             app.UseRouting();
 
@@ -48,9 +64,7 @@ namespace WebAppMARS
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
             });
         }
     }
