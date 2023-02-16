@@ -13,6 +13,6 @@ namespace Contracts.ViewModels
         public int Id { get; set; }
         [DisplayName("ФИО")]
         public string Name { get; set; }
-        public List<int> SalesIds { get; set; }
+        public Dictionary<int, int> SalesIds { get; set; }
     }
 }

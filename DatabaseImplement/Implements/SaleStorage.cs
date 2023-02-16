@@ -15,11 +15,15 @@ namespace DatabaseImplement.Implements
     {
         public List<SaleViewModel> GetFullList()
         {
-            using var context = new SalesDatabase();
-            return context.Sales
-            .ToList()
-            .Select(CreateModel)
-            .ToList();
+            using (var context = new SalesDatabase())
+            {
+                return context.Sales
+                .Include(rec => rec.SalesData)
+                .ThenInclude(rec => rec.Product)
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
+            }
         }
         public List<SaleViewModel> GetFilteredList(SaleBindingModel model)
         {
@@ -27,11 +31,16 @@ namespace DatabaseImplement.Implements
             {
                 return null;
             }
-            using var context = new SalesDatabase();
-            return context.Sales
-            .ToList()
-            .Select(CreateModel)
-            .ToList();
+            using (var context = new SalesDatabase())
+            {
+                return context.Sales
+                .Include(rec => rec.SalesData)
+                .ThenInclude(rec => rec.Product)
+                .Where(rec => rec.BuyerId == model.BuyerId)
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
+            }
         }
         public SaleViewModel GetElement(SaleBindingModel model)
         {
@@ -41,7 +50,9 @@ namespace DatabaseImplement.Implements
             }
             using var context = new SalesDatabase();
             var sale = context.Sales
-            .FirstOrDefault(rec =>  rec.Id == model.Id);
+            .Include(rec => rec.SalesData)
+            .ThenInclude(rec => rec.Product)
+            .FirstOrDefault(rec => rec.BuyerId == model.BuyerId || rec.Id == model.Id);
             return sale != null ? CreateModel(sale) : null;
         }
         public void Insert(SaleBindingModel model)
@@ -54,8 +65,8 @@ namespace DatabaseImplement.Implements
                 {
                     Date = model.Date,
                     Time = model.Time,
-                    SalesPointId = model.SalesPointId,
                     BuyerId = model.BuyerId,
+                    SalesPointId = model.SalesPointId,
                     TotalAmount = model.TotalAmount
                 };
                 context.Sales.Add(sale);
@@ -80,7 +91,6 @@ namespace DatabaseImplement.Implements
                 {
                     throw new Exception("Элемент не найден");
                 }
-                CreateModel(model, element, context);
                 context.SaveChanges();
                 transaction.Commit();
             }
@@ -104,23 +114,38 @@ namespace DatabaseImplement.Implements
                 throw new Exception("Элемент не найден");
             }
         }
-        private Sale CreateModel(SaleBindingModel model, Sale subject, SalesDatabase context)
-        {
-            subject.Date = model.Date;
-            subject.Time = model.Time;
-            subject.SalesPointId = model.SalesPointId;
-            subject.BuyerId = model.BuyerId;
-            subject.TotalAmount = model.TotalAmount;
 
+        private static Sale CreateModel(SaleBindingModel model, Sale sale, SalesDatabase context)
+        {
+            sale.Date = model.Date;
+            sale.Time = model.Time;
+            sale.BuyerId = model.BuyerId;
+            sale.SalesPointId = model.SalesPointId;
+            sale.TotalAmount = model.TotalAmount;
             if (model.Id.HasValue)
             {
-                var salesData = context.SalesDatas.Where(rec => rec.Id == model.Id).ToList();
-                context.SalesDatas.RemoveRange(salesData);
+                var salesData = context.SalesDatas.Where(rec => rec.SaleId == model.Id.Value).ToList();
+                context.SalesDatas.RemoveRange(salesData.Where(rec => !model.SalesData.ContainsKey(rec.ProductId)).ToList());
+                context.SaveChanges();
+                foreach (var update in salesData)
+                {
+                    update.ProductQuantity = model.SalesData[update.ProductId].Item2;
+                    model.SalesData.Remove(update.ProductId);
+                }
                 context.SaveChanges();
             }
-            return subject;
+            foreach (var fc in model.SalesData)
+            {
+                context.SalesDatas.Add(new SalesData
+                {
+                    SaleId = sale.Id,
+                    ProductId = fc.Key,
+                    ProductQuantity = fc.Value.Item2
+                });
+                context.SaveChanges();
+            }
+            return sale;
         }
-        
         private static SaleViewModel CreateModel(Sale sale)
         {
             return new SaleViewModel
@@ -128,12 +153,11 @@ namespace DatabaseImplement.Implements
                 Id = sale.Id,
                 Date = sale.Date,
                 Time = sale.Time,
-                SalesPointId = sale.SalesPointId,
                 BuyerId = sale.BuyerId,
+                SalesPointId = sale.SalesPointId,
+                TotalAmount = sale.TotalAmount,
                 SalesData = sale.SalesData
-                .ToDictionary(recSS => recSS.ProductQuantity, recSS => recSS.ProductIdAmount),
-                TotalAmount = sale.TotalAmount
-
+                .ToDictionary(rec => rec.ProductId, rec => (rec.Product?.Name, rec.ProductQuantity, rec.ProductIdAmount))
             };
         }
 

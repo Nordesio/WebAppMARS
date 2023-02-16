@@ -34,17 +34,12 @@ namespace DatabaseImplement.Implements
                 return null;
             }
             using var context = new SalesDatabase();
-
-            var buyer = context.Buyers.FirstOrDefault(rec => rec.Name == model.Name ||
-            rec.Id == model.Id);
-            return buyer != null ?
-            new BuyerViewModel
-            {
-                Id = buyer.Id,
-                Name = buyer.Name,
-                SalesIds = buyer.SalesIds,
-            } : null;
-
+            var buyer = context.Buyers
+                .Include(rec => rec.SalesIds)
+                .ThenInclude(rec => rec.Id)
+                .FirstOrDefault(rec => rec.Name == model.Name || rec.Id == model.Id);
+            return buyer != null ? CreateModel(buyer) : null;
+           
         }
 
         public List<BuyerViewModel> GetFilteredList(BuyerBindingModel model)
@@ -53,16 +48,15 @@ namespace DatabaseImplement.Implements
             {
                 return null;
             }
+           
             using var context = new SalesDatabase();
-
-            return context.Buyers.Where(rec => rec.Name == model.Name)
-            .Select(rec => new BuyerViewModel
-            {
-                Id = rec.Id,
-                Name = rec.Name,
-                SalesIds = rec.SalesIds,
-            })
-            .ToList();
+            return context.Buyers
+                .Include(rec => rec.SalesIds)
+                .ThenInclude(rec => rec.Id)
+                .Where(rec => rec.Name.Contains(model.Name))
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
 
         }
 
@@ -70,13 +64,12 @@ namespace DatabaseImplement.Implements
         {
             using var context = new SalesDatabase();
 
-            return context.Buyers.Select(rec => new BuyerViewModel
-            {
-                Id = rec.Id,
-                Name = rec.Name,
-                SalesIds = rec.SalesIds
-            })
-            .ToList();
+            return context.Buyers
+                .Include(rec => rec.SalesIds)
+                .ThenInclude(rec => rec.Id)
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
 
         }
 
@@ -105,8 +98,16 @@ namespace DatabaseImplement.Implements
         private Buyer CreateModel(BuyerBindingModel model, Buyer buyer)
         {
             buyer.Name = model.Name;
-            buyer.SalesIds = model.SalesIds;
             return buyer;
+        }
+        private static BuyerViewModel CreateModel(Buyer buyer)
+        {
+            return new BuyerViewModel
+            {
+                Id = buyer.Id,
+                Name = buyer.Name,
+                SalesIds = buyer.SalesIds.ToDictionary(rec => rec.Id, rec => rec.Id)
+            };
         }
     }
 }

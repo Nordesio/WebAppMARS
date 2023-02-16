@@ -18,12 +18,11 @@ namespace DatabaseImplement.Implements
             using (var context = new SalesDatabase())
             {
                 return context.SalesPoints
-                .Select(rec => new SalesPointViewModel
-                {
-                    Id = rec.Id,
-                    Name = rec.Name,
-                    ProvidedProducts = rec.ProvidedProducts.ToDictionary(rec => rec.ProductId, rec => rec.ProductQuntity)
-                }).ToList();
+                .Include(rec => rec.ProvidedProducts)
+                .ThenInclude(rec => rec.Product)
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
             }
         }
         public List<SalesPointViewModel> GetFilteredList(SalesPointBindingModel model)
@@ -35,12 +34,12 @@ namespace DatabaseImplement.Implements
             using (var context = new SalesDatabase())
             {
                 return context.SalesPoints
-                 .Select(rec => new SalesPointViewModel
-                 {
-                     Id = rec.Id,
-                     Name = rec.Name,
-                     ProvidedProducts = rec.ProvidedProducts.ToDictionary(rec => rec.ProductId, rec => rec.ProductQuntity)
-                 }).ToList();
+                .Include(rec => rec.ProvidedProducts)
+                .ThenInclude(rec => rec.Product)
+                .Where(rec => rec.Name.Contains(model.Name))
+                .ToList()
+                .Select(CreateModel)
+                .ToList();
             }
         }
         public SalesPointViewModel GetElement(SalesPointBindingModel model)
@@ -49,26 +48,32 @@ namespace DatabaseImplement.Implements
             {
                 return null;
             }
-            using (var context = new SalesDatabase())
-            {
-                var subject = context.SalesPoints
+            using var context = new SalesDatabase();
+                var salesPoint = context.SalesPoints
+                .Include(rec => rec.ProvidedProducts)
+                .ThenInclude(rec => rec.Product)
                 .FirstOrDefault(rec => rec.Name == model.Name || rec.Id == model.Id);
-                return subject != null ?
-               new SalesPointViewModel
-               {
-                   Id = subject.Id,
-                   Name = subject.Name,
-                   ProvidedProducts = subject.ProvidedProducts.ToDictionary(rec => rec.ProductId, rec => rec.ProductQuntity)
-               } :
-                null;
-            }
+            return salesPoint != null ? CreateModel(salesPoint) : null;
         }
         public void Insert(SalesPointBindingModel model)
         {
-            using (var context = new SalesDatabase())
+            using var context = new SalesDatabase();
+            using var transaction = context.Database.BeginTransaction();
+            try
             {
-                context.SalesPoints.Add(CreateModel(model, new SalesPoint()));
+                SalesPoint salesPoint = new SalesPoint()
+                {
+                    Name = model.Name
+                };
+                context.SalesPoints.Add(salesPoint);
                 context.SaveChanges();
+                CreateModel(model, salesPoint, context);
+                transaction.Commit();
+            }
+            catch
+            {
+                transaction.Rollback();
+                throw;
             }
         }
         public void Update(SalesPointBindingModel model)
@@ -106,10 +111,42 @@ namespace DatabaseImplement.Implements
             }
         }
 
-        private SalesPoint CreateModel(SalesPointBindingModel model, SalesPoint subject)
+        private static SalesPoint CreateModel(SalesPointBindingModel model, SalesPoint salesPoint, SalesDatabase context)
         {
-            subject.Name = model.Name;
-            return subject;
+            salesPoint.Name = model.Name;
+            if (model.Id.HasValue)
+            {
+                var providedProducts = context.ProvidedProducts.Where(rec => rec.SalesPointId == model.Id.Value).ToList();
+                context.ProvidedProducts.RemoveRange(providedProducts.Where(rec => !model.ProvidedProducts.ContainsKey(rec.ProductId)).ToList());
+                context.SaveChanges();
+                foreach (var update in providedProducts)
+                {
+                    update.ProductQuntity = model.ProvidedProducts[update.ProductId].Item2;
+                    model.ProvidedProducts.Remove(update.ProductId);
+                }
+                context.SaveChanges();
+            }
+            foreach (var fc in model.ProvidedProducts)
+            {
+                context.ProvidedProducts.Add(new ProvidedProducts
+                {
+                    SalesPointId = salesPoint.Id,
+                    ProductId = fc.Key,
+                    ProductQuntity = fc.Value.Item2
+                });
+                context.SaveChanges();
+            }
+            return salesPoint;
+        }
+        private static SalesPointViewModel CreateModel(SalesPoint salesPoint)
+        {
+            return new SalesPointViewModel
+            {
+                Id = salesPoint.Id,
+                Name = salesPoint.Name,
+                ProvidedProducts = salesPoint.ProvidedProducts
+                .ToDictionary(rec => rec.ProductId, rec => (rec.Product?.Name, rec.ProductQuntity))
+            };
         }
     }
 }

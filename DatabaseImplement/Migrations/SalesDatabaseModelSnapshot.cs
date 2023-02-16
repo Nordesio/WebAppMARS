@@ -73,7 +73,7 @@ namespace DatabaseImplement.Migrations
                     b.Property<int>("ProductQuntity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SalesPointId")
+                    b.Property<int>("SalesPointId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -107,6 +107,10 @@ namespace DatabaseImplement.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BuyerId");
+
+                    b.HasIndex("SalesPointId");
+
                     b.ToTable("Sales");
                 });
 
@@ -126,7 +130,7 @@ namespace DatabaseImplement.Migrations
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
 
-                    b.Property<int?>("SaleId")
+                    b.Property<int>("SaleId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -170,18 +174,42 @@ namespace DatabaseImplement.Migrations
                 {
                     b.HasOne("DatabaseImplement.Models.SalesPoint", "SalesPoint")
                         .WithMany("ProvidedProducts")
-                        .HasForeignKey("SalesPointId");
+                        .HasForeignKey("SalesPointId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("SalesPoint");
+                });
+
+            modelBuilder.Entity("DatabaseImplement.Models.Sale", b =>
+                {
+                    b.HasOne("DatabaseImplement.Models.Buyer", null)
+                        .WithMany("SalesIds")
+                        .HasForeignKey("BuyerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DatabaseImplement.Models.SalesPoint", null)
+                        .WithMany("Sales")
+                        .HasForeignKey("SalesPointId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("DatabaseImplement.Models.SalesData", b =>
                 {
                     b.HasOne("DatabaseImplement.Models.Sale", "Sale")
                         .WithMany("SalesData")
-                        .HasForeignKey("SaleId");
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("DatabaseImplement.Models.Buyer", b =>
+                {
+                    b.Navigation("SalesIds");
                 });
 
             modelBuilder.Entity("DatabaseImplement.Models.ProvidedProducts", b =>
@@ -202,6 +230,8 @@ namespace DatabaseImplement.Migrations
             modelBuilder.Entity("DatabaseImplement.Models.SalesPoint", b =>
                 {
                     b.Navigation("ProvidedProducts");
+
+                    b.Navigation("Sales");
                 });
 #pragma warning restore 612, 618
         }

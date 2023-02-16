@@ -11,7 +11,7 @@ namespace DatabaseImplement.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        [NotMapped]
-        public virtual List<int> SalesIds { get; set; }
+        [ForeignKey("BuyerId")]
+        public virtual List<Sale> SalesIds { get; set; }
     }
 }

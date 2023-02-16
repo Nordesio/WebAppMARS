@@ -10,6 +10,6 @@ namespace Contracts.BindingModels
     {
         public int? Id { get; set; }
         public string Name { get; set; }
-        public List<int> SalesIds { get; set; }
+        public Dictionary<int, int> SalesIds { get; set; }
     }
 }

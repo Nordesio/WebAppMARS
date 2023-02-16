@@ -16,7 +16,7 @@ namespace Contracts.ViewModels
         public DateTime Time { get; set; }
         public int SalesPointId { get; set; }
         public int BuyerId { get; set; }
-        public Dictionary<int, float> SalesData { get; set; }
+        public Dictionary<int, (string, int,  float)> SalesData { get; set; }
         [DisplayName("Общая цена")]
         public float TotalAmount { get; set; }
     }

@@ -11,6 +11,7 @@ namespace DatabaseImplement.Models
     {
         public int Id { get; set; }
         public int ProductId { get; set; }
+        public int SaleId { get; set; }
         [Required]
         public int ProductQuantity { get; set; }
         [Required]

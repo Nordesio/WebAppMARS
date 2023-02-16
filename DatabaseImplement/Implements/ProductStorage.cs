@@ -17,9 +17,6 @@ namespace DatabaseImplement.Implements
         {
             using var context = new SalesDatabase();
             return context.Products
-            .Include(rec => rec.ProvidedProducts)
-            .Include(rec => rec.SalesDatas)
-            .ToList()
             .Select(CreateModel)
             .ToList();
         }
@@ -31,10 +28,7 @@ namespace DatabaseImplement.Implements
             }
             using var context = new SalesDatabase();
             return context.Products
-           .Include(rec => rec.ProvidedProducts)
-            .Include(rec => rec.SalesDatas)
             .Where(rec => rec.Name.Contains(model.Name))
-            .ToList()
             .Select(CreateModel)
             .ToList();
         }
@@ -46,53 +40,25 @@ namespace DatabaseImplement.Implements
             }
             using var context = new SalesDatabase();
             var product = context.Products
-            .Include(rec => rec.ProvidedProducts)
-            .Include(rec => rec.SalesDatas)
             .FirstOrDefault(rec => rec.Name == model.Name || rec.Id == model.Id);
             return product != null ? CreateModel(product) : null;
         }
         public void Insert(ProductBindingModel model)
         {
             using var context = new SalesDatabase();
-            using var transaction = context.Database.BeginTransaction();
-            try
-            {
-                Product product = new Product()
-                {
-                    Name = model.Name,
-                    Price = model.Price
-                };
-                context.Products.Add(product);
-                context.SaveChanges();
-                CreateModel(model, product, context);
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            context.Products.Add(CreateModel(model, new Product()));
+            context.SaveChanges();
         }
         public void Update(ProductBindingModel model)
         {
             using var context = new SalesDatabase();
-            using var transaction = context.Database.BeginTransaction();
-            try
+            var element = context.Products.FirstOrDefault(rec => rec.Id == model.Id);
+            if(element == null)
             {
-                var element = context.Products.FirstOrDefault(rec => rec.Id == model.Id);
-                if (element == null)
-                {
-                    throw new Exception("Элемент не найден");
-                }
-                CreateModel(model, element, context);
-                context.SaveChanges();
-                transaction.Commit();
+                throw new Exception("Элемент не найден");
             }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            CreateModel(model, element);
+            context.SaveChanges();
         }
         public void Delete(ProductBindingModel model)
         {
@@ -108,32 +74,11 @@ namespace DatabaseImplement.Implements
                 throw new Exception("Элемент не найден");
             }
         }
-        private Product CreateModel(ProductBindingModel model, Product product, SalesDatabase context)
+        private static Product CreateModel(ProductBindingModel model, Product product)
         {
             product.Name = model.Name;
             product.Price = model.Price;
-
-
-
-            if (model.Id.HasValue)
-            {
-                var providedProducts = context.ProvidedProducts.Where(rec => rec.Id == model.Id).ToList();
-                context.ProvidedProducts.RemoveRange(providedProducts);
-                context.SaveChanges();
-            }
-
             return product;
-        }
-
-        public void BindingOrder(int productId, int orderId)
-        {
-            var context = new SalesDatabase();
-            context.ProvidedProducts.Add(new ProvidedProducts
-            {
-                ProductId = productId
-            });
-            context.SaveChanges();
-
         }
         private static ProductViewModel CreateModel(Product product)
         {

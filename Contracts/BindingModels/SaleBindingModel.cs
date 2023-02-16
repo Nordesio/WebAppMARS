@@ -13,7 +13,7 @@ namespace Contracts.BindingModels
         public DateTime Time { get; set; }
         public int SalesPointId { get; set; }
         public int BuyerId { get; set; }
-        public Dictionary<int, float> SalesData { get; set; }
+        public Dictionary<int, (string, int, float)> SalesData { get; set; }
         public float TotalAmount { get; set; }
     }
 }
