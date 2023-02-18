@@ -8,7 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Contracts.StorageContracts;
+using Contracts.ViewModels;
+using DatabaseImplement;
+using BusinessLogics;
+using Contracts.BusinessLogics;
+using Microsoft.EntityFrameworkCore;
+using DatabaseImplement.Implements;
 namespace WebApp
 {
     public class Startup
@@ -23,8 +29,22 @@ namespace WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            services.AddTransient<IBuyerStorage, BuyerStorage>();
+            services.AddTransient<IProductStorage, ProductStorage>();
+            services.AddTransient<ISalesPointStorage, SalesPointStorage>();
+            services.AddTransient<ISaleStorage, SaleStorage>();
+            
+            services.AddTransient<IBuyerLogic, BuyerLogic>();
+            services.AddTransient<IProductLogic, ProductLogic>();
+            services.AddTransient<ISalesPointLogic, SalesPointLogic>();
+            services.AddTransient<ISaleLogic, SaleLogic>();
+            
+            services.AddControllers();
             services.AddControllersWithViews();
-        }
+            //services.AddScoped<SalesDatabase, SalesDatabase>();
+           // services.AddDbContext<SalesDatabase>(item => item.UseSqlServer(Configuration.GetConnectionString("DefaultDatabase")));
+         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

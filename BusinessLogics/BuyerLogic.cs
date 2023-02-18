@@ -36,7 +36,8 @@ namespace BusinessLogics
         {
             var element = _buyerStorage.GetElement(new BuyerBindingModel
             {
-                Name = model.Name
+                Name = model.Name,
+                Password = model.Password
             });
             if (element != null && element.Id != model.Id)
             {

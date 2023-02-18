@@ -9,10 +9,10 @@ namespace DatabaseImplement
         {
             if(optionsBuilder.IsConfigured == false)
             {
-                optionsBuilder.UseSqlServer(@"Data Source=localhost\SQLEXPRESS;Initial Catalog=SalesDatabase;Integrated Security=True;
-MultipleActiveResultSets=True;");
+                optionsBuilder.UseSqlServer(@"Server=localhost\SQLEXPRESS;Database=SalesDatabase;Trusted_Connection=True;MultipleActiveResultSets=True");
             }
             base.OnConfiguring(optionsBuilder);
+            
         }
         public virtual DbSet<Buyer> Buyers { get; set; }
         public virtual DbSet<Product> Products { get; set; }

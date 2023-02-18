@@ -98,6 +98,7 @@ namespace DatabaseImplement.Implements
         private Buyer CreateModel(BuyerBindingModel model, Buyer buyer)
         {
             buyer.Name = model.Name;
+            buyer.Password = model.Password;
             return buyer;
         }
         private static BuyerViewModel CreateModel(Buyer buyer)
@@ -106,6 +107,7 @@ namespace DatabaseImplement.Implements
             {
                 Id = buyer.Id,
                 Name = buyer.Name,
+                Password = buyer.Password,
                 SalesIds = buyer.SalesIds.ToDictionary(rec => rec.Id, rec => rec.Id)
             };
         }

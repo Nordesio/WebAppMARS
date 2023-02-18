@@ -10,10 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Contracts.StorageContracts;
 using Contracts.ViewModels;
-using DatabaseImplement.Implements;
 using BusinessLogics;
 using Contracts.BusinessLogics;
 using Microsoft.OpenApi.Models;
+using DatabaseImplement.Implements;
 namespace WebAppMARS
 {
     public class Startup
@@ -28,11 +28,12 @@ namespace WebAppMARS
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             services.AddTransient<IBuyerStorage, BuyerStorage>();
             services.AddTransient<IProductStorage, ProductStorage>();
             services.AddTransient<ISalesPointStorage, SalesPointStorage>();
             services.AddTransient<ISaleStorage, SaleStorage>();
-
+            
             services.AddTransient<IBuyerLogic, BuyerLogic>();
             services.AddTransient<IProductLogic, ProductLogic>();
             services.AddTransient<ISalesPointLogic, SalesPointLogic>();
