@@ -1,7 +1,6 @@
 ﻿@using Contracts.ViewModels;
 
-@model List<ProductViewModel>
-
+@model List<SalesPointViewModel>
 @{
     ViewData["Title"] = "Index";
 }
@@ -15,10 +14,10 @@
                 Id
             </th>
             <th>
-                Имя
+                Название
             </th>
             <th>
-                Цена
+                Продукты
             </th>
             <th></th>
         </tr>
@@ -33,10 +32,11 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Price)
+                @Html.DisplayFor(modelItem => item.ProvidedProducts)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>

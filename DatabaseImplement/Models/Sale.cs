@@ -16,7 +16,7 @@ namespace DatabaseImplement.Models
         public int SalesPointId { get; set; }
         public int BuyerId { get; set; }
         [ForeignKey("SaleId")]
-        public List<SalesData> SalesData { get; set; }
+        public virtual List<SalesData> SalesData { get; set; }
         public float TotalAmount { get; set; }
 
     }

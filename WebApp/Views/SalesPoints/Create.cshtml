@@ -1,0 +1,64 @@
+﻿@model Contracts.ViewModels.SalesPointViewModel;
+@{
+    int i = 1;
+}
+@{
+    ViewData["Title"] = "Create";
+
+}
+ 
+<h2>Создание магазина</h2>
+ 
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    <div class="salesPointName">
+        <label>Название магазина</label>
+        <input type="text" name="name" />
+    </div>
+    <div id="productsBlock">
+        @foreach(var vb in ViewBag.Products)
+        {
+        <div class="productItem">
+            <h4>Продукт № @i</h4>
+            <div>
+                <label>Название</label>
+                <div>
+                    <select id="Product" name = "Product" class="form-control" asp-items="@(new SelectList(@ViewBag.Products, "Id", "Name"))"></select>
+                </div>
+                 <label>Кол-во</label>
+                <div>
+                    <input type="number" name="Price" />
+                </div>
+            </div>
+            </div>
+            i++;
+        }
+    </div>
+    //<p><a class="addLink">Добавить новый элемент</a></p>
+    <p><input type="submit" value="Добавить" /></p>
+}
+ 
+@section Scripts {
+   <script>
+       $(function () {
+           var i = 0;
+           var text = Text(@(ViewBag.Products));
+           $('.addLink').click(function()
+           {
+               i++;
+               var html2Add= "<div class='productItem'>"+
+            "<h4>Продукт № "+(i+1) + "</h4>"+
+            "<div><label>Название</label>"+
+                "<div>"+
+                    "<select name='Product["+i+"].name' class='form-control' asp-items="+text+"></select>"+
+                "</div>"+
+                "</div>"+
+               " <label>Кол-во</label><div>"+
+                    "<input type='number' name='Price["+i+"].name' />"+
+                "</div></div>";
+               $('#productsBlock').append(html2Add);
+           })
+       })
+    </script>
+}

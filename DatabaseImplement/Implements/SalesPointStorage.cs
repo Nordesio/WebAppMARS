@@ -87,6 +87,7 @@ namespace DatabaseImplement.Implements
                 {
                     throw new Exception("Элемент не найден");
                 }
+                CreateModel(model, element, context);
                 context.SaveChanges();
                 transaction.Commit();
             }

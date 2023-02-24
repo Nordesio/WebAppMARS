@@ -12,9 +12,9 @@ namespace DatabaseImplement.Models
         public int Id { get; set; }
         public string Name { get; set; }
         [ForeignKey("SalesPointId")]
-        public List<ProvidedProducts> ProvidedProducts { get; set; }
+        public virtual List<ProvidedProducts> ProvidedProducts { get; set; }
         [ForeignKey("SalesPointId")]
-        public List<Sale> Sales { get; set; }
+        public virtual List<Sale> Sales { get; set; }
 
     }
 }

@@ -53,14 +53,7 @@ namespace DatabaseImplement.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProductId")
-                        .IsUnique()
-                        .HasFilter("[ProductId] IS NOT NULL");
 
                     b.ToTable("Products");
                 });
@@ -82,6 +75,8 @@ namespace DatabaseImplement.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
 
                     b.HasIndex("SalesPointId");
 
@@ -140,6 +135,8 @@ namespace DatabaseImplement.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("SaleId");
 
                     b.ToTable("SalesDatas");
@@ -160,28 +157,21 @@ namespace DatabaseImplement.Migrations
                     b.ToTable("SalesPoints");
                 });
 
-            modelBuilder.Entity("DatabaseImplement.Models.Product", b =>
-                {
-                    b.HasOne("DatabaseImplement.Models.ProvidedProducts", "ProvidedProducts")
-                        .WithOne("Product")
-                        .HasForeignKey("DatabaseImplement.Models.Product", "ProductId");
-
-                    b.HasOne("DatabaseImplement.Models.SalesData", "SalesDatas")
-                        .WithOne("Product")
-                        .HasForeignKey("DatabaseImplement.Models.Product", "ProductId");
-
-                    b.Navigation("ProvidedProducts");
-
-                    b.Navigation("SalesDatas");
-                });
-
             modelBuilder.Entity("DatabaseImplement.Models.ProvidedProducts", b =>
                 {
+                    b.HasOne("DatabaseImplement.Models.Product", "Product")
+                        .WithMany("ProvidedProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DatabaseImplement.Models.SalesPoint", "SalesPoint")
                         .WithMany("ProvidedProducts")
                         .HasForeignKey("SalesPointId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
 
                     b.Navigation("SalesPoint");
                 });
@@ -203,11 +193,19 @@ namespace DatabaseImplement.Migrations
 
             modelBuilder.Entity("DatabaseImplement.Models.SalesData", b =>
                 {
+                    b.HasOne("DatabaseImplement.Models.Product", "Product")
+                        .WithMany("SalesDatas")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DatabaseImplement.Models.Sale", "Sale")
                         .WithMany("SalesData")
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Product");
 
                     b.Navigation("Sale");
                 });
@@ -217,19 +215,16 @@ namespace DatabaseImplement.Migrations
                     b.Navigation("SalesIds");
                 });
 
-            modelBuilder.Entity("DatabaseImplement.Models.ProvidedProducts", b =>
+            modelBuilder.Entity("DatabaseImplement.Models.Product", b =>
                 {
-                    b.Navigation("Product");
+                    b.Navigation("ProvidedProducts");
+
+                    b.Navigation("SalesDatas");
                 });
 
             modelBuilder.Entity("DatabaseImplement.Models.Sale", b =>
                 {
                     b.Navigation("SalesData");
-                });
-
-            modelBuilder.Entity("DatabaseImplement.Models.SalesData", b =>
-                {
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("DatabaseImplement.Models.SalesPoint", b =>

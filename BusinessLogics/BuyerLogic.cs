@@ -18,7 +18,6 @@ namespace BusinessLogics
         {
             _buyerStorage = buyerStorage;
         }
-
         public List<BuyerViewModel> Read(BuyerBindingModel model)
         {
             if (model == null)

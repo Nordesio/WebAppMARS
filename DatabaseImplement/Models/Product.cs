@@ -14,9 +14,9 @@ namespace DatabaseImplement.Models
         public string Name { get; set; }
         public float Price { get; set; }
         [ForeignKey("ProductId")]
-        public ProvidedProducts ProvidedProducts { get; set; }
+        public virtual List<ProvidedProducts> ProvidedProducts { get; set; }
         [ForeignKey("ProductId")]
-        public SalesData SalesDatas { get; set; }
+        public virtual List<SalesData> SalesDatas { get; set; }
 
     }
 }
