@@ -10,7 +10,7 @@ namespace Contracts.ViewModels
 {
     public class BuyerViewModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [DisplayName("ФИО")]
         public string Name { get; set; }
         public string Password { get; set; }

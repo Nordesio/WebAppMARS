@@ -14,6 +14,6 @@ namespace Contracts.ViewModels
         [DisplayName("Название")]
         public string Name { get; set; }
         [DisplayName("Цена")]
-        public float Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

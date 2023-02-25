@@ -9,12 +9,12 @@ namespace DatabaseImplement.Models
 {
     public class Buyer
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
         public string Password { get; set; }
         [ForeignKey("BuyerId")]
-        public virtual List<Sale> SalesIds { get; set; }
+        public virtual List<Sale> Sales { get; set; }
     }
 }

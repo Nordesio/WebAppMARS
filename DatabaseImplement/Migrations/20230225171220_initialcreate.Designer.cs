@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DatabaseImplement.Migrations
 {
     [DbContext(typeof(SalesDatabase))]
-    [Migration("20230224124124_initialcreate")]
+    [Migration("20230225171220_initialcreate")]
     partial class initialcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,7 +23,7 @@ namespace DatabaseImplement.Migrations
 
             modelBuilder.Entity("DatabaseImplement.Models.Buyer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int?>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -52,8 +52,8 @@ namespace DatabaseImplement.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -92,20 +92,20 @@ namespace DatabaseImplement.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("BuyerId")
+                    b.Property<int?>("BuyerId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Date")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SalesPointId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Time")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Time")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("TotalAmount")
-                        .HasColumnType("real");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -126,8 +126,8 @@ namespace DatabaseImplement.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<float>("ProductIdAmount")
-                        .HasColumnType("real");
+                    b.Property<decimal>("ProductIdAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("ProductQuantity")
                         .HasColumnType("int");
@@ -181,10 +181,8 @@ namespace DatabaseImplement.Migrations
             modelBuilder.Entity("DatabaseImplement.Models.Sale", b =>
                 {
                     b.HasOne("DatabaseImplement.Models.Buyer", null)
-                        .WithMany("SalesIds")
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Sales")
+                        .HasForeignKey("BuyerId");
 
                     b.HasOne("DatabaseImplement.Models.SalesPoint", null)
                         .WithMany("Sales")
@@ -214,7 +212,7 @@ namespace DatabaseImplement.Migrations
 
             modelBuilder.Entity("DatabaseImplement.Models.Buyer", b =>
                 {
-                    b.Navigation("SalesIds");
+                    b.Navigation("Sales");
                 });
 
             modelBuilder.Entity("DatabaseImplement.Models.Product", b =>

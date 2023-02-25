@@ -12,7 +12,7 @@ namespace DatabaseImplement.Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public float Price { get; set; }
+        public decimal Price { get; set; }
         [ForeignKey("ProductId")]
         public virtual List<ProvidedProducts> ProvidedProducts { get; set; }
         [ForeignKey("ProductId")]

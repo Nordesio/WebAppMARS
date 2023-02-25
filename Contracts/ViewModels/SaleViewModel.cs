@@ -11,13 +11,13 @@ namespace Contracts.ViewModels
     {
         public int Id { get; set; }
         [DisplayName("Дата")]
-        public DateTime Date { get; set; }
+        public string Date { get; set; }
         [DisplayName("Время")]
-        public DateTime Time { get; set; }
+        public string Time { get; set; }
         public int SalesPointId { get; set; }
-        public int BuyerId { get; set; }
-        public Dictionary<int, (string, int,  float)> SalesData { get; set; }
+        public int? BuyerId { get; set; }
+        public Dictionary<int, (string, int, decimal)> SalesData { get; set; }
         [DisplayName("Общая цена")]
-        public float TotalAmount { get; set; }
+        public decimal TotalAmount { get; set; }
     }
 }

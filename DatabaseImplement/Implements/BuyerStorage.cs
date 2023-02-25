@@ -12,21 +12,26 @@ namespace DatabaseImplement.Implements
 {
     public class BuyerStorage : IBuyerStorage
     {
-        public void Delete(BuyerBindingModel model)
+
+        public List<BuyerViewModel> GetFullList()
         {
             using var context = new SalesDatabase();
-            Buyer element = context.Buyers.FirstOrDefault(rec => rec.Id == model.Id);
-            if (element != null)
-            {
-                context.Buyers.Remove(element);
-                context.SaveChanges();
-            }
-            else
-            {
-                throw new Exception("Клиент не найден");
-            }
+            return context.Buyers
+            .Select(CreateModel)
+            .ToList();
         }
-
+        public List<BuyerViewModel> GetFilteredList(BuyerBindingModel model)
+        {
+            if (model == null)
+            {
+                return null;
+            }
+            using var context = new SalesDatabase();
+            return context.Buyers
+            .Where(rec => rec.Name.Contains(model.Name))
+            .Select(CreateModel)
+            .ToList();
+        }
         public BuyerViewModel GetElement(BuyerBindingModel model)
         {
             if (model == null)
@@ -35,44 +40,9 @@ namespace DatabaseImplement.Implements
             }
             using var context = new SalesDatabase();
             var buyer = context.Buyers
-                .Include(rec => rec.SalesIds)
-                .ThenInclude(rec => rec.Id)
-                .FirstOrDefault(rec => rec.Name == model.Name || rec.Id == model.Id);
+            .FirstOrDefault(rec => rec.Name == model.Name || rec.Id == model.Id);
             return buyer != null ? CreateModel(buyer) : null;
-           
         }
-
-        public List<BuyerViewModel> GetFilteredList(BuyerBindingModel model)
-        {
-            if (model == null)
-            {
-                return null;
-            }
-           
-            using var context = new SalesDatabase();
-            return context.Buyers
-                .Include(rec => rec.SalesIds)
-                .ThenInclude(rec => rec.Id)
-                .Where(rec => rec.Name.Contains(model.Name))
-                .ToList()
-                .Select(CreateModel)
-                .ToList();
-
-        }
-
-        public List<BuyerViewModel> GetFullList()
-        {
-            using var context = new SalesDatabase();
-
-            return context.Buyers
-                .Include(rec => rec.SalesIds)
-                .ThenInclude(rec => rec.Id)
-                .ToList()
-                .Select(CreateModel)
-                .ToList();
-
-        }
-
         public void Insert(BuyerBindingModel model)
         {
             using var context = new SalesDatabase();
@@ -95,6 +65,21 @@ namespace DatabaseImplement.Implements
             context.SaveChanges();
 
         }
+        public void Delete(BuyerBindingModel model)
+        {
+            using var context = new SalesDatabase();
+            Buyer element = context.Buyers.FirstOrDefault(rec => rec.Id == model.Id);
+            if (element != null)
+            {
+                context.Buyers.Remove(element);
+                context.SaveChanges();
+            }
+            else
+            {
+                throw new Exception("Клиент не найден");
+            }
+        }
+
         private Buyer CreateModel(BuyerBindingModel model, Buyer buyer)
         {
             buyer.Name = model.Name;
@@ -107,8 +92,7 @@ namespace DatabaseImplement.Implements
             {
                 Id = buyer.Id,
                 Name = buyer.Name,
-                Password = buyer.Password,
-                SalesIds = buyer.SalesIds.ToDictionary(rec => rec.Id, rec => rec.Id)
+                Password = buyer.Password
             };
         }
     }

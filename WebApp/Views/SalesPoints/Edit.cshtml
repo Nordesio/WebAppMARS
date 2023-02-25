@@ -1,0 +1,71 @@
+﻿@model Contracts.ViewModels.SalesPointViewModel;
+
+@{
+    @using static DatabaseImplement.Models.ProvidedProducts;
+    ViewData["Title"] = "Edit";
+    int i = 1;
+}
+
+<h1>Edit</h1>
+
+<h4>SalesPoint</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div class="form-group">
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            @foreach(var ch in Model.ProvidedProducts)
+            {
+                
+            
+            <div class="form-group">
+                <label name="Product" class="control-label"> Продукт № @i</label>
+                     <select id="Product" name = "Product" class="form-control" asp-items="@(new SelectList(@ViewBag.Products, "Id", "Name", selectedValue:@ch.Key))">
+                              
+                              </select>
+                   <span name="Product" class="text-danger"></span>
+                
+            </div>
+             <label>Кол-во</label>
+                <div>
+                    <input type="number" name="Price" value="@ch.Value.Item2" />
+                </div>
+                i++;
+            }
+                @for(int y = 0; y < (ViewBag.Products.Count - Model.ProvidedProducts.Count()); y++)
+                {
+                      <div class="form-group">
+                <label name="Product" class="control-label"> Продукт № @i</label>
+                     <select id="Product" name = "Product" class="form-control" asp-items="@(new SelectList(@ViewBag.Products, "Id", "Name"))">
+                              
+                              </select>
+                   <span name="Product" class="text-danger"></span>
+                
+            </div>
+             <label>Кол-во</label>
+                <div>
+                    <input type="number" name="Price"  />
+                </div>
+                }
+            <div class="form-group" >
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+             <div>
+    <a asp-action="Index">Back to List</a>
+</div>
+        </form>
+    </div>
+   
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

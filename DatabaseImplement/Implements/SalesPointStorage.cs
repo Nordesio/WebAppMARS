@@ -120,10 +120,11 @@ namespace DatabaseImplement.Implements
                 var providedProducts = context.ProvidedProducts.Where(rec => rec.SalesPointId == model.Id.Value).ToList();
                 context.ProvidedProducts.RemoveRange(providedProducts.Where(rec => !model.ProvidedProducts.ContainsKey(rec.ProductId)).ToList());
                 context.SaveChanges();
-                foreach (var update in providedProducts)
+                providedProducts = context.ProvidedProducts.Where(rec => rec.SalesPointId == model.Id.Value).ToList();
+                foreach (var pp in providedProducts)
                 {
-                    update.ProductQuntity = model.ProvidedProducts[update.ProductId].Item2;
-                    model.ProvidedProducts.Remove(update.ProductId);
+                    pp.ProductQuntity = model.ProvidedProducts[pp.ProductId].Item2;
+                    model.ProvidedProducts.Remove(pp.ProductId);
                 }
                 context.SaveChanges();
             }

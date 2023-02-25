@@ -12,6 +12,6 @@ namespace Contracts.ViewModels
         public int Id { get; set; }
         [DisplayName("Название")]
         public string Name { get; set; }
-        public virtual Dictionary<int, (string, int)> ProvidedProducts { get; set; }
+        public Dictionary<int, (string, int)> ProvidedProducts { get; set; }
     }
 }

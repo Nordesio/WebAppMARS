@@ -1,0 +1,57 @@
+﻿    @model Contracts.ViewModels.SaleViewModel;
+@{
+    int i = 1;
+}
+@{
+    ViewData["Title"] = "SaleCreate";
+
+}
+ 
+<h2>Покупка</h2>
+ 
+<form method="post">
+    <label>Выбор магазина:</label>
+        <div>
+           <select id="salesPointId" name = "salesPointId" class="form-control" asp-items="@(new SelectList(@ViewBag.SalesPoint, "Id", "Name"))"></select>
+        </div>
+    @Html.AntiForgeryToken()
+        @foreach(var vb in ViewBag.Products)
+        {
+            <h4>Продукт № @i</h4>
+            <div>
+                <label>Название</label>
+                <div>
+                    <select id="Product" name = "Product" class="form-control" asp-items="@(new SelectList(@ViewBag.Products, "Id", "Name"))"></select>
+                </div>
+                 <label>Кол-во</label>
+                <div>
+                    <input type="number" name="Count" id="Count" />
+                </div>
+            </div>
+            i++;
+        }
+    <p><input type="submit" value="Добавить" /></p>
+
+</form>
+<script>
+    $('#Product').on('change', function () {
+            check();
+    });
+    $('#Count').on('change', function () {
+            check();
+    });
+    function check() {
+        var Count = $('#Count').val();
+        var Product = $('#Product').val();
+        if (Count && Product) {
+           $.ajax({
+             method: "POST",
+             url: "/BuyerAndSales/Calc",
+             data: { Count: Count, Product: Product },
+             success: function (result) {
+                $("#sum").val(result);
+             }
+           });
+        };
+     }  
+</script>

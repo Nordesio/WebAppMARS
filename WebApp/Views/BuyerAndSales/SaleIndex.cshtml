@@ -1,0 +1,68 @@
+﻿@using Contracts.ViewModels;
+
+@model List<SaleViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+<p>
+    <a asp-action="SaleCreate">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Id
+            </th>
+            <th>
+                Дата
+            </th>
+            <th>
+                Время
+            </th>
+            <th>
+                SalesPointId
+            </th>
+            <th>
+                BuyerId
+            </th>
+            <th>
+                Информация
+            </th>
+            <th>
+                Общее число
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesPointId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BuyerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesData.Values)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalAmount)
+            </td>
+            <td>
+                <a asp-action="SaleEdit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="SaleDelete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

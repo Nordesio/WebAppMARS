@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+@model Contracts.ViewModels.BuyerViewModel;
+<h1>Create</h1>
+
+<h4>Buyer</h4>
+<hr />
+<form method="post">
+<div class="row">
+    <div class="col-md-4">
+            <div class="form-group">
+                <div class="col-4">Логин:</div>
+                <div class="col-8"><input type="text" name="name" /></div>
+            </div>
+            <div class="form-group">
+                <div class="col-4">Пароль:</div>
+                <div class="col-8"><input type="password" name="password" /></div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary" />
+            </div>
+
+    </div>
+</div>
+</form>

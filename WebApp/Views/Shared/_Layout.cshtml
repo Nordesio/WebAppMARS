@@ -11,7 +11,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebApp</a> 
+                <a class="navbar-brand" asp-area="" asp-controller="BuyerAndSales" asp-action="Enter">WebApp</a> 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,13 +26,19 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="SalesPoints" asp-action="Index">Точки продаж</a>
                         </li>
                           <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Ваши покупки</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BuyerAndSales" asp-action="Enter">Вход</a>
                         </li>
                           <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Enter">Вход</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BuyerAndSales" asp-action="Register">Регистрация</a>
                         </li>
                           <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Register">Регистрация</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BuyerAndSales" asp-action="SaleIndex">Ваши покупки</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BuyerAndSales" asp-action="BuyerIndex">Список покупателей</a>
+                        </li>
+                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="BuyerAndSales" asp-action="Filling">Заполнить данными бд</a>
                         </li>
                     </ul>
                 </div>

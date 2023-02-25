@@ -20,6 +20,7 @@ namespace DatabaseImplement.Implements
                 return context.Sales
                 .Include(rec => rec.SalesData)
                 .ThenInclude(rec => rec.Product)
+                
                 .ToList()
                 .Select(CreateModel)
                 .ToList();
@@ -36,6 +37,7 @@ namespace DatabaseImplement.Implements
                 return context.Sales
                 .Include(rec => rec.SalesData)
                 .ThenInclude(rec => rec.Product)
+                
                 .Where(rec => rec.BuyerId == model.BuyerId)
                 .ToList()
                 .Select(CreateModel)
@@ -52,6 +54,7 @@ namespace DatabaseImplement.Implements
             var sale = context.Sales
             .Include(rec => rec.SalesData)
             .ThenInclude(rec => rec.Product)
+            
             .FirstOrDefault(rec => rec.BuyerId == model.BuyerId || rec.Id == model.Id);
             return sale != null ? CreateModel(sale) : null;
         }
@@ -91,6 +94,7 @@ namespace DatabaseImplement.Implements
                 {
                     throw new Exception("Элемент не найден");
                 }
+                CreateModel(model, element, context);
                 context.SaveChanges();
                 transaction.Commit();
             }
@@ -127,9 +131,11 @@ namespace DatabaseImplement.Implements
                 var salesData = context.SalesDatas.Where(rec => rec.SaleId == model.Id.Value).ToList();
                 context.SalesDatas.RemoveRange(salesData.Where(rec => !model.SalesData.ContainsKey(rec.ProductId)).ToList());
                 context.SaveChanges();
+                salesData = context.SalesDatas.Where(rec => rec.SaleId == model.Id.Value).ToList();
                 foreach (var update in salesData)
                 {
                     update.ProductQuantity = model.SalesData[update.ProductId].Item2;
+                    update.ProductIdAmount = model.SalesData[update.ProductId].Item3;
                     model.SalesData.Remove(update.ProductId);
                 }
                 context.SaveChanges();
@@ -140,10 +146,13 @@ namespace DatabaseImplement.Implements
                 {
                     SaleId = sale.Id,
                     ProductId = fc.Key,
-                    ProductQuantity = fc.Value.Item2
+                    ProductQuantity = fc.Value.Item2,
+                    ProductIdAmount = fc.Value.Item3
                 });
                 context.SaveChanges();
             }
+            
+
             return sale;
         }
         private static SaleViewModel CreateModel(Sale sale)
@@ -153,7 +162,7 @@ namespace DatabaseImplement.Implements
                 Id = sale.Id,
                 Date = sale.Date,
                 Time = sale.Time,
-                BuyerId = sale.BuyerId,
+                BuyerId = (int)sale.BuyerId,
                 SalesPointId = sale.SalesPointId,
                 TotalAmount = sale.TotalAmount,
                 SalesData = sale.SalesData

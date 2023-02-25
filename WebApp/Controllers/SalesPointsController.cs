@@ -12,6 +12,7 @@ using Contracts.BusinessLogics;
 using Contracts.StorageContracts;
 using Contracts.ViewModels;
 using Contracts.BindingModels;
+using static DatabaseImplement.Models.Product;
 namespace WebApp.Controllers
 {
     public class SalesPointsController : Controller
@@ -39,7 +40,13 @@ namespace WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            ViewBag.Products = _productLogic.Read(null);
+            var pr = new List<ProductViewModel>();
+            var prnew = new ProductViewModel();
+            prnew.Name = "Нет продукта";
+            prnew.Id = 10000000;
+            pr.Add(prnew);
+            pr.AddRange(_productLogic.Read(null));
+            ViewBag.Products = pr;
             return View();
         }
         [HttpPost]
@@ -48,9 +55,19 @@ namespace WebApp.Controllers
             List<ProductBindingModel> pbm = new List<ProductBindingModel>();
             foreach(int ch in Product)
             {
-                var qwe = new ProductBindingModel();
-                qwe.Id = ch;
-                pbm.Add(qwe);
+                if(ch != 10000000)
+                {
+                    var qwe = new ProductBindingModel();
+                    qwe.Id = ch;
+                    pbm.Add(qwe);
+                }
+            }
+            for(int i = Product.Count() - 1; i > 0; i--)
+            {
+                if(Product[i] == 10000000)
+                {
+                    Product.RemoveAt(i);
+                }
             }
             List<ProductViewModel> pr = new List<ProductViewModel>();
             foreach(var ch in pbm)
@@ -70,19 +87,81 @@ namespace WebApp.Controllers
             _salesPointLogic.CreateOrUpdate(model);
             return RedirectToAction(nameof(Index));
         }
+
         [HttpGet]
-        public async Task<IActionResult> ProvidedProducts()
+        public async Task<IActionResult> Edit(int? id, string name, Dictionary<int, (string, int)> providedProducts)
         {
-            ViewBag.Products = _productLogic.Read(null).ToList();
-            return View();
+            var model = new SalesPointBindingModel();
+
+            model.Id = id;
+            model.Name = name;
+            model.ProvidedProducts = providedProducts;
+            var pr = new List<ProductViewModel>();
+            var prnew = new ProductViewModel();
+            prnew.Name = "Нет продукта";
+            prnew.Id = 10000000;
+            pr.Add(prnew);
+            pr.AddRange(_productLogic.Read(null));
+            ViewBag.Products = pr;
+            var model2 = _salesPointLogic.Read(model)[0];
+            Dictionary<int, (string, int)> dict = new Dictionary<int, (string, int)>();
+            return View(_salesPointLogic.Read(model)[0]);
         }
-        /*
-        [HttpPost]
-        public async Task<IActionResult> ProvidedProducts()
+        public async Task<IActionResult> Edit(int? id,string name, List<int> Product, List<int> Price)
         {
-            return RedirectToAction(nameof(Create));
+            List<ProductBindingModel> pbm = new List<ProductBindingModel>();
+            foreach (int ch in Product)
+            {
+                if (ch != 10000000)
+                {
+                    var qwe = new ProductBindingModel();
+                    qwe.Id = ch;
+                    pbm.Add(qwe);
+                }
+            }
+            for (int i = Product.Count() - 1; i > 0; i--)
+            {
+                if (Product[i] == 10000000)
+                {
+                    Product.RemoveAt(i);
+                }
+            }
+            List<ProductViewModel> pr = new List<ProductViewModel>();
+            foreach (var ch in pbm)
+            {
+                var list = _productLogic.Read(ch);
+                pr.Add(list[0]);
+            }
+            var model = new SalesPointBindingModel();
+            model.Name = name;
+            Dictionary<int, (string, int)> dict = new Dictionary<int, (string, int)>();
+            for (int i = 0; i < Product.Count(); i++)
+            {
+                dict.Add(Product[i], (pr[i].Name, Price[i]));
+            }
+
+            model.ProvidedProducts = dict;
+            model.Id = id;
+            _salesPointLogic.CreateOrUpdate(model);
+            return RedirectToAction(nameof(Index));
         }
-        */
-      
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id, string name, Dictionary<int, (string, int)> dict)
+        {
+
+            var model = new SalesPointBindingModel();
+            model.Id = id;
+            model.Name = name;
+            model.ProvidedProducts = dict;
+            return View(_salesPointLogic.Read(model)[0]);
+        }
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(SalesPointBindingModel model)
+        {
+
+            _salesPointLogic.Delete(model);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

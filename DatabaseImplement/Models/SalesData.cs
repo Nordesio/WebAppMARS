@@ -15,7 +15,7 @@ namespace DatabaseImplement.Models
         [Required]
         public int ProductQuantity { get; set; }
         [Required]
-        public float ProductIdAmount { get; set; }
+        public decimal ProductIdAmount { get; set; }
         public Product Product { get; set; }
         public Sale Sale { get; set; }
     }
